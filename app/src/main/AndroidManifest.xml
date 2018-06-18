@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.caworks.wechathk">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- 是否是xposed模块，xposed根据这个来判断是否是模块 -->
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+
+        <!-- 模块描述，显示在xposed模块列表那里第二行 -->
+        <meta-data
+            android:name="xposeddescription"
+            android:value="让你企业微信打卡不再迟到" />
+
+        <!-- 最低xposed版本号(lib文件名可知) -->
+        <meta-data
+            android:name="xposedminversion"
+            android:value="30" />
+
+        <activity android:name="org.caworks.wechathk.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
