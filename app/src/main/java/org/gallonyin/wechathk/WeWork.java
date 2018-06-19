@@ -51,6 +51,7 @@ public class WeWork {
 
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.e(TAG, "onReceive: " + intent.getAction());
                 String action = intent.getAction();
                 if (action == null) return;
                 switch (action) {
@@ -93,10 +94,17 @@ public class WeWork {
         });
     }
 
-    private float salted(float f) {
-//        if (f > 0) {
-//            return (float) (f + salt * (1 - (Math.random() * 2)));
-//        }
+    private float saltedLa(float f) {
+        if (f > 0) {
+            return (float) (f + 0.002082f + salt * (1 - (Math.random() * 2)));
+        }
+        return f;
+    }
+
+    private float saltedLo(float f) {
+        if (f > 0) {
+            return (float) (f + -0.005203f + salt * (1 - (Math.random() * 2)));
+        }
         return f;
     }
 
@@ -277,8 +285,8 @@ public class WeWork {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 if (!isOpen) return;
                 Location l = new Location(LocationManager.GPS_PROVIDER);
-                l.setLatitude(salted(la));
-                l.setLongitude(salted(lo));
+                l.setLatitude(saltedLa(la));
+                l.setLongitude(saltedLo(lo));
                 l.setAccuracy(100f);
                 l.setTime(System.currentTimeMillis());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -294,8 +302,8 @@ public class WeWork {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 if (!isOpen) return;
                 Location l = new Location(LocationManager.GPS_PROVIDER);
-                l.setLatitude(salted(la));
-                l.setLongitude(salted(lo));
+                l.setLatitude(saltedLa(la));
+                l.setLongitude(saltedLo(lo));
                 l.setAccuracy(100f);
                 l.setTime(System.currentTimeMillis());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -420,8 +428,8 @@ public class WeWork {
                                 }
                             }
                             Location l = new Location(LocationManager.GPS_PROVIDER);
-                            l.setLatitude(salted(la));
-                            l.setLongitude(salted(lo));
+                            l.setLatitude(saltedLa(la));
+                            l.setLongitude(saltedLo(lo));
                             l.setAccuracy(10.00f);
                             l.setTime(System.currentTimeMillis());
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -464,8 +472,8 @@ public class WeWork {
                             try {
                                 if (m != null) {
                                     Location l = new Location(LocationManager.GPS_PROVIDER);
-                                    l.setLatitude(salted(la));
-                                    l.setLongitude(salted(lo));
+                                    l.setLatitude(saltedLa(la));
+                                    l.setLongitude(saltedLo(lo));
                                     l.setAccuracy(100f);
                                     l.setTime(System.currentTimeMillis());
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

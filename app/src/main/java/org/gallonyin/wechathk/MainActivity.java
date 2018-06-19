@@ -1,10 +1,13 @@
 package org.gallonyin.wechathk;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -65,6 +68,5 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "保存修改成功", Toast.LENGTH_LONG).show();
             }
         });
-
     }
 }
