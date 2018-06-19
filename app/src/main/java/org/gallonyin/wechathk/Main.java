@@ -1,4 +1,4 @@
-package org.caworks.wechathk;
+package org.gallonyin.wechathk;
 
 import android.util.Log;
 

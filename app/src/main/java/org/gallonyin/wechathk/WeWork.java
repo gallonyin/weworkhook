@@ -1,4 +1,4 @@
-package org.caworks.wechathk;
+package org.gallonyin.wechathk;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -38,6 +38,7 @@ public class WeWork {
     private float defLo = 118.784308f;
     private float la = 0;
     private float lo = 0;
+    private boolean isOpen = true;
 
     public void start(ClassLoader classLoader) {
         this.classLoader = classLoader;
@@ -50,19 +51,29 @@ public class WeWork {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                String data = intent.getStringExtra("data");
-                Log.e(TAG, "onReceive: " + data);
-                String[] split = data.split("#");
-                if (split.length != 2) return;
-                la = Float.parseFloat(split[0]);
-                lo = Float.parseFloat(split[1]);
-                sp.edit().putFloat("GPSLatitude", la)
-                        .putFloat("GPSLongitude", lo)
-                        .apply();
+                String action = intent.getAction();
+                if (action == null) return;
+                switch (action) {
+                    case "weworkdk_gps":
+                        String data = intent.getStringExtra("data");
+                        Log.e(TAG, "onReceive: " + data);
+                        String[] split = data.split("#");
+                        if (split.length != 2) return;
+                        la = Float.parseFloat(split[0]);
+                        lo = Float.parseFloat(split[1]);
+                        sp.edit().putFloat("GPSLatitude", la)
+                                .putFloat("GPSLongitude", lo)
+                                .apply();
+                        break;
+                    case "weworkdk_open":
+                        isOpen = intent.getBooleanExtra("weworkdk_open", true);
+                        break;
+                }
             }
         };
 
-        IntentFilter filter = new IntentFilter("weworkdk");
+        IntentFilter filter = new IntentFilter("weworkdk_gps");
+        filter.addAction("weworkdk_open");
         context.registerReceiver(receiver, filter);
     }
 
@@ -83,9 +94,9 @@ public class WeWork {
     }
 
     private float salted(float f) {
-        if (f > 0) {
-            return (float) (f + salt * (1 - (Math.random() * 2)));
-        }
+//        if (f > 0) {
+//            return (float) (f + salt * (1 - (Math.random() * 2)));
+//        }
         return f;
     }
 
@@ -96,6 +107,7 @@ public class WeWork {
                 "getCellLocation", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         param.setResult(null);
                         Log.d(TAG, "getCellLocation");
                     }
@@ -105,6 +117,7 @@ public class WeWork {
                 "onCellLocationChanged", CellLocation.class, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         param.setResult(null);
                         Log.d(TAG, "onCellLocationChanged");
                     }
@@ -115,6 +128,7 @@ public class WeWork {
                     "getPhoneCount", new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            if (!isOpen) return;
                             param.setResult(1);
                             Log.d(TAG, "getPhoneCount");
                         }
@@ -126,6 +140,7 @@ public class WeWork {
                     "getNeighboringCellInfo", new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            if (!isOpen) return;
                             param.setResult(new ArrayList<>());
                             Log.d(TAG, "getNeighboringCellInfo");
                         }
@@ -137,6 +152,7 @@ public class WeWork {
                     "getAllCellInfo", new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            if (!isOpen) return;
                             param.setResult(null);
                             Log.d(TAG, "getAllCellInfo");
                         }
@@ -145,6 +161,7 @@ public class WeWork {
                     "onCellInfoChanged", List.class, new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            if (!isOpen) return;
                             param.setResult(null);
                             Log.d(TAG, "onCellInfoChanged");
                         }
@@ -154,6 +171,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiManager", classLoader, "getScanResults", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult(new ArrayList<>());
                 Log.d(TAG, "getScanResults");
             }
@@ -162,6 +180,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiManager", classLoader, "getWifiState", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult(1);
                 Log.d(TAG, "getWifiState");
             }
@@ -170,6 +189,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiManager", classLoader, "isWifiEnabled", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult(true);
                 Log.d(TAG, "isWifiEnabled");
             }
@@ -178,6 +198,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getMacAddress", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult("00-00-00-00-00-00-00-00");
                 Log.d(TAG, "getMacAddress");
             }
@@ -186,6 +207,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getSSID", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult("null");
                 Log.d(TAG, "getSSID");
             }
@@ -194,6 +216,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getBSSID", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult("00-00-00-00-00-00-00-00");
                 Log.d(TAG, "getBSSID");
             }
@@ -204,6 +227,7 @@ public class WeWork {
                 "getTypeName", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         param.setResult("WIFI");
                         Log.d(TAG, "getTypeName");
                     }
@@ -212,6 +236,7 @@ public class WeWork {
                 "isConnectedOrConnecting", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         param.setResult(true);
                         Log.d(TAG, "isConnectedOrConnecting");
                     }
@@ -221,6 +246,7 @@ public class WeWork {
                 "isConnected", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         param.setResult(true);
                         Log.d(TAG, "isConnected");
                     }
@@ -230,6 +256,7 @@ public class WeWork {
                 "isAvailable", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         param.setResult(true);
                         Log.d(TAG, "isAvailable");
                     }
@@ -239,6 +266,7 @@ public class WeWork {
                 "isRegistered", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         param.setResult(true);
                         Log.d(TAG, "isRegistered");
                     }
@@ -247,6 +275,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod(LocationManager.class, "getLastLocation", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 Location l = new Location(LocationManager.GPS_PROVIDER);
                 l.setLatitude(salted(la));
                 l.setLongitude(salted(lo));
@@ -263,6 +292,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod(LocationManager.class, "getLastKnownLocation", String.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 Location l = new Location(LocationManager.GPS_PROVIDER);
                 l.setLatitude(salted(la));
                 l.setLongitude(salted(lo));
@@ -280,6 +310,7 @@ public class WeWork {
         XposedBridge.hookAllMethods(LocationManager.class, "getProviders", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 ArrayList<String> arrayList = new ArrayList<>();
                 arrayList.add("gps");
                 param.setResult(arrayList);
@@ -290,6 +321,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod(LocationManager.class, "getBestProvider", Criteria.class, Boolean.TYPE, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult("gps");
                 Log.d(TAG, "getBestProvider");
             }
@@ -298,6 +330,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod(LocationManager.class, "addGpsStatusListener", GpsStatus.Listener.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 if (param.args[0] != null) {
                     XposedHelpers.callMethod(param.args[0], "onGpsStatusChanged", 1);
                     XposedHelpers.callMethod(param.args[0], "onGpsStatusChanged", 3);
@@ -309,6 +342,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod(LocationManager.class, "addNmeaListener", GpsStatus.NmeaListener.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!isOpen) return;
                 param.setResult(false);
                 Log.d(TAG, "addNmeaListener");
             }
@@ -318,6 +352,7 @@ public class WeWork {
                 "getGpsStatus", GpsStatus.class, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         Log.d(TAG, "getGpsStatus");
                         GpsStatus gss = (GpsStatus) param.getResult();
                         if (gss == null)
@@ -370,6 +405,7 @@ public class WeWork {
                 XposedBridge.hookMethod(method, new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         Log.d(TAG, "requestLocationUpdates");
                         if (param.args.length >= 4 && (param.args[3] instanceof LocationListener)) {
 
@@ -410,6 +446,7 @@ public class WeWork {
                 XposedBridge.hookMethod(method, new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
                         Log.d(TAG, "requestSingleUpdate");
                         if (param.args.length >= 3 && (param.args[1] instanceof LocationListener)) {
 

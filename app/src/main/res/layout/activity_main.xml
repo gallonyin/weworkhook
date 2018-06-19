@@ -3,14 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/bt_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="300dp"
-        android:text="SAVE" />
-
     <EditText
         android:id="@+id/et_la"
         android:layout_width="216dp"
@@ -30,5 +22,23 @@
         android:ems="10"
         android:hint="经度 longitude"
         android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/bt_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="300dp"
+        android:text="SAVE" />
+
+    <CheckBox
+        android:id="@+id/cb_open"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:checked="true"
+        android:text="启用修改" />
 
 </RelativeLayout>
