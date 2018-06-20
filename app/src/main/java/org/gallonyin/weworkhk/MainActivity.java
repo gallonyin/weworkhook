@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bt_gps).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WebActivity.enterActivity(MainActivity.this, "http://lbs.qq.com/tool/getpoint/index.html");
+                TencentMapActivity.enterActivity(MainActivity.this, "http://lbs.qq.com/tool/getpoint/index.html");
             }
         });
         findViewById(R.id.bt_save).setOnClickListener(new View.OnClickListener() {

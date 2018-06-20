@@ -67,7 +67,7 @@ public class WeWork {
                                 .apply();
                         break;
                     case "weworkdk_open":
-                        isOpen = intent.getBooleanExtra("weworkdk_open", true);
+                        isOpen = intent.getBooleanExtra("open", true);
                         break;
                 }
             }
