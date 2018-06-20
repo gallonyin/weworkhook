@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "org.gallonyin.wechathk"
+        applicationId "org.gallonyin.weworkhk"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1

@@ -1,4 +1,4 @@
-package org.gallonyin.wechathk;
+package org.gallonyin.weworkhk;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -79,6 +79,7 @@ public class WeWork {
     }
 
     private void hkStart() {
+        Log.e(TAG, "hkStart()");
         XposedHelpers.findAndHookMethod("android.app.Application", classLoader, "attach", Context.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {

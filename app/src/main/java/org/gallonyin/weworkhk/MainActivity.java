@@ -1,13 +1,10 @@
-package org.gallonyin.wechathk;
+package org.gallonyin.weworkhk;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -51,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent("weworkdk_open");
                 intent.putExtra("open", isChecked);
                 sendBroadcast(intent);
+            }
+        });
+        findViewById(R.id.bt_gps).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebActivity.enterActivity(MainActivity.this, "http://lbs.qq.com/tool/getpoint/index.html");
             }
         });
         findViewById(R.id.bt_save).setOnClickListener(new View.OnClickListener() {

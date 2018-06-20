@@ -1,4 +1,4 @@
-package org.example.gallon2.wechathk;
+package org.example.gallon2.weworkhk;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
