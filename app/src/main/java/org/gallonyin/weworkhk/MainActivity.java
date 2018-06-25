@@ -1,9 +1,14 @@
 package org.gallonyin.weworkhk;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bt_gps).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TencentMapActivity.enterActivity(MainActivity.this, "http://lbs.qq.com/tool/getpoint/index.html");
+                TencentMapActivity.enterActivity(MainActivity.this);
             }
         });
         findViewById(R.id.bt_save).setOnClickListener(new View.OnClickListener() {
@@ -69,7 +74,35 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("data", la + "#" + lo);
                 sendBroadcast(intent);
                 Toast.makeText(MainActivity.this, "保存修改成功", Toast.LENGTH_LONG).show();
+                sp.edit().putFloat("la", Float.parseFloat(la))
+                        .putFloat("lo", Float.parseFloat(lo))
+                        .apply();
             }
         });
+
+        startService(new Intent(this, LongRunningService.class));
+    }
+
+    public static class LongRunningService extends Service {
+
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        @Override
+        public int onStartCommand(final Intent intent, int flags, int startId) {
+            new Thread() {
+                @Override
+                public void run() {
+                }
+            }.start();
+            AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            long triggerAtTime = System.currentTimeMillis() + 60 * 60 * 1000;
+            Intent i = new Intent(this, LongRunningService.class);
+            manager.set(AlarmManager.RTC_WAKEUP, triggerAtTime, PendingIntent.getService(this, 0, i, 0));
+            return super.onStartCommand(intent, flags, startId);
+        }
     }
 }

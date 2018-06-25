@@ -2,10 +2,9 @@ package org.gallonyin.weworkhk;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
@@ -24,14 +23,14 @@ import com.tencent.tencentmap.mapsdk.map.UiSettings;
 public class TencentMapActivity extends AppCompatActivity {
     private static final String TAG = "TencentMapActivity";
 
-    private FrameLayout fl_root;
-    private String url;
     private MapView mapView;
     private TencentMap tencentMap;
+    private SharedPreferences sp;
+    private float laDefault;
+    private float loDefault;
 
-    public static void enterActivity(Context context, String url) {
+    public static void enterActivity(Context context) {
         Intent intent = new Intent(context, TencentMapActivity.class);
-        intent.putExtra("url", url);
         context.startActivity(intent);
     }
 
@@ -39,10 +38,10 @@ public class TencentMapActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tencent_map);
+        sp = getSharedPreferences("main", Context.MODE_PRIVATE);
+        laDefault = sp.getFloat("la", 31.984240f);
+        loDefault = sp.getFloat("lo", 118.763820f);
 
-        url = getIntent().getStringExtra("url");
-
-        fl_root = findViewById(R.id.fl_root);
         mapView = findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
 
@@ -53,7 +52,7 @@ public class TencentMapActivity extends AppCompatActivity {
         //获取TencentMap实例
         tencentMap = mapView.getMap();
         //设置地图中心点
-        tencentMap.setCenter(new LatLng(31.984240, 118.763820));
+        tencentMap.setCenter(new LatLng(laDefault, loDefault));
         //设置缩放级别
         tencentMap.setZoom(11);
 
@@ -74,7 +73,7 @@ public class TencentMapActivity extends AppCompatActivity {
             }
         });
 
-        showMarker(31.984240d, 118.763820d);
+        showMarker(laDefault, loDefault);
     }
 
     private void showMarker(final double la, final double lo) {
@@ -98,6 +97,9 @@ public class TencentMapActivity extends AppCompatActivity {
                 intent.putExtra("data", la + "#" + lo);
                 sendBroadcast(intent);
                 Toast.makeText(mapView.getContext(), "已更新坐标", Toast.LENGTH_SHORT).show();
+                sp.edit().putFloat("la", (float) la)
+                        .putFloat("lo", (float) lo)
+                        .apply();
             }
         });
 //        //Marker拖拽事件
