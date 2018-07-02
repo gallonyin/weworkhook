@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.telephony.CellLocation;
@@ -43,6 +44,8 @@ public class WeWork {
     private static final String TAG = "WeWork";
 
     public static ClassLoader classLoader;
+    public static Context context; //weworkApplication
+    private static Handler sHandler = new Handler(Looper.getMainLooper());
 
     private float salt = 0.00005f;
     private float defLa = 32.041713f;
@@ -50,6 +53,7 @@ public class WeWork {
     private float la = 0;
     private float lo = 0;
     private boolean isOpen = true;
+
 
     public void start(ClassLoader classLoader) {
         WeWork.classLoader = classLoader;
@@ -80,12 +84,40 @@ public class WeWork {
                     case "weworkdk_open":
                         isOpen = intent.getBooleanExtra("open", true);
                         break;
+                    case "weworkdk_activity":
+                        boolean start = intent.getBooleanExtra("start", true);
+                        if (start) {
+                            final Class<?> ParamClass = WeWorkClazz.getParamClass();
+                            final Class<?> AttendanceActivity2Class = WeWorkClazz.getAttendanceActivity2Class();
+                            Parcelable o = null;
+                            try {
+                                o = (Parcelable) ParamClass.newInstance();
+                                ParamClass.getField("dMq").set(o, true);
+                                ParamClass.getField("dMr").set(o, true);
+                                ParamClass.getField("from").set(o, 2);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            Intent i = new Intent(context, AttendanceActivity2Class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            i.putExtra("data", o);
+                            context.startActivity(i);
+                        } else {
+                            ShellUtils.execCmd("input keyevent 4", true);
+                            ShellUtils.execCmd("input keyevent 3", true);
+                        }
+                        break;
+                    case "weworkdk_screenshot":
+                        ShellUtils.execCmd("screencap -p /sdcard/autoshot.png", true);
+                        break;
                 }
             }
         };
 
         IntentFilter filter = new IntentFilter("weworkdk_gps");
         filter.addAction("weworkdk_open");
+        filter.addAction("weworkdk_activity");
+        filter.addAction("weworkdk_screenshot");
         context.registerReceiver(receiver, filter);
     }
 
@@ -94,7 +126,7 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.app.Application", classLoader, "attach", Context.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Context context = (Context) param.args[0];
+                context = (Context) param.args[0];
 
                 SharedPreferences sp = context.getSharedPreferences("hkWeWork", Context.MODE_PRIVATE);
                 la = sp.getFloat("GPSLatitude", defLa);
@@ -122,11 +154,20 @@ public class WeWork {
                     for (String s : extras.keySet()) {
                         Object value = extras.get(s);
                         Log.e(TAG, "k: " + s + " v: " + value);
-                        if (value != null && value.getClass().equals(ParamClass)) {
+                        if (value != null && value.getClass().equals(ParamClass)) { //进入打卡页
                             for (Field field : ParamClass.getFields()) {
                                 Log.e(TAG, "f: " + field + " v: " + field.get(value));
                             }
-                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                            sHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ShellUtils.execCmd("screencap -p /sdcard/autoshot.png", true);
+                                }
+                            }, 3000);
+
+
+                            sHandler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     Log.e(TAG, "o: ");
