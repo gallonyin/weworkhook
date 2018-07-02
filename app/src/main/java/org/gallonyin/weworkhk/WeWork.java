@@ -1,5 +1,6 @@
 package org.gallonyin.weworkhk;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +12,18 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.telephony.CellLocation;
 import android.util.Log;
+import android.view.View;
 
+import org.gallonyin.weworkhk.util.ShellUtils;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -24,6 +33,8 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
+import static de.robv.android.xposed.XposedBridge.log;
+
 /**
  * Created by gallonyin on 2018/6/13.
  */
@@ -31,7 +42,7 @@ import de.robv.android.xposed.XposedHelpers;
 public class WeWork {
     private static final String TAG = "WeWork";
 
-    private ClassLoader classLoader;
+    public static ClassLoader classLoader;
 
     private float salt = 0.00005f;
     private float defLa = 32.041713f;
@@ -41,7 +52,7 @@ public class WeWork {
     private boolean isOpen = true;
 
     public void start(ClassLoader classLoader) {
-        this.classLoader = classLoader;
+        WeWork.classLoader = classLoader;
 
         hkStart();
     }
@@ -91,6 +102,64 @@ public class WeWork {
 
                 hkGPS(classLoader);
                 initReceiver(context, sp);
+
+                hkActivity(context);
+            }
+        });
+    }
+
+    private void hkActivity(final Context context) {
+        XposedHelpers.findAndHookMethod(Activity.class, "startActivity", Intent.class, new XC_MethodHook() {
+
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Intent intent = (Intent) param.args[0];
+                Log.e(TAG, "startActivity " + param.thisObject.getClass());
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    final Class<?> ParamClass = WeWorkClazz.getParamClass();
+                    final Class<?> AttendanceActivity2Class = WeWorkClazz.getAttendanceActivity2Class();
+                    for (String s : extras.keySet()) {
+                        Object value = extras.get(s);
+                        Log.e(TAG, "k: " + s + " v: " + value);
+                        if (value != null && value.getClass().equals(ParamClass)) {
+                            for (Field field : ParamClass.getFields()) {
+                                Log.e(TAG, "f: " + field + " v: " + field.get(value));
+                            }
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.e(TAG, "o: ");
+//                                    ShellUtils.execCmd("am start -n com.tencent.wework/com.tencent.wework.launch.LaunchSplashActivity", true); //启动wework
+                                    Parcelable o = null;
+                                    try {
+                                        o = (Parcelable) ParamClass.newInstance();
+                                        ParamClass.getField("dMq").set(o, true);
+                                        ParamClass.getField("dMr").set(o, true);
+                                        ParamClass.getField("from").set(o, 2);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    Intent i = new Intent(context, AttendanceActivity2Class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    i.putExtra("data", o);
+                                    context.startActivity(i);
+                                    Log.e(TAG, "ooo: ");
+                                }
+                            }, 10000);
+                        }
+                    }
+                }
+
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(View.class, "performClick", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Log.e(TAG, "performClick: " + param.thisObject);
+                Log.e(TAG, "performClick1: " + param.thisObject.getClass());
+                Log.e(TAG, "performClick2: " + param.thisObject.getClass().getName());
             }
         });
     }
@@ -402,7 +471,7 @@ public class WeWork {
                             m.invoke(gss, svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask);
                             param.setResult(gss);
                         } catch (Exception e) {
-                            XposedBridge.log(e);
+                            log(e);
                         }
                     }
                 });
@@ -442,7 +511,7 @@ public class WeWork {
                                     m.invoke(ll, l);
                                 }
                             } catch (Exception e) {
-                                XposedBridge.log(e);
+                                log(e);
                             }
                         }
                     }
@@ -483,7 +552,7 @@ public class WeWork {
                                     m.invoke(ll, l);
                                 }
                             } catch (Exception e) {
-                                XposedBridge.log(e);
+                                log(e);
                             }
                         }
                     }

@@ -49,4 +49,12 @@
         android:checked="true"
         android:text="启用修改" />
 
+    <ImageView
+        android:id="@+id/iv_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        android:layout_marginLeft="30dp"
+        />
+
 </RelativeLayout>
