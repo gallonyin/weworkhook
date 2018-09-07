@@ -42,7 +42,8 @@
             android:name="xposedminversion"
             android:value="30" />
 
-        <activity android:name="org.gallonyin.weworkhk.MainActivity">
+        <activity android:name="org.gallonyin.weworkhk.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
