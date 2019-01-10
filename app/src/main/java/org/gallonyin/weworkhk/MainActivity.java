@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -79,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
                         .apply();
             }
         });
+        TextView tv_confirm = findViewById(R.id.tv_confirm);
+        if (confirm()) {
+            tv_confirm.setText("插件已正常启动");
+        } else {
+        }
 
         startService(new Intent(this, LongRunningService.class));
     }
@@ -104,5 +110,9 @@ public class MainActivity extends AppCompatActivity {
             manager.set(AlarmManager.RTC_WAKEUP, triggerAtTime, PendingIntent.getService(this, 0, i, 0));
             return super.onStartCommand(intent, flags, startId);
         }
+    }
+
+    private boolean confirm() {
+        return false;
     }
 }

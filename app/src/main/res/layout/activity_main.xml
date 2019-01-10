@@ -49,4 +49,13 @@
         android:checked="true"
         android:text="启用修改" />
 
+    <TextView
+        android:id="@+id/tv_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:text="插件启动失败" />
+
 </RelativeLayout>

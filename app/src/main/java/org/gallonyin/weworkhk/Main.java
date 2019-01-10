@@ -6,7 +6,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
@@ -23,6 +25,15 @@ public class Main implements IXposedHookLoadPackage {
             if (lpparam.packageName.equals("com.tencent.wework")) {
                 Log.d("Main", "wework");
                 new WeWork().start(lpparam.classLoader);
+            }
+            if (lpparam.packageName.equals("org.gallonyin.weworkhk")) {
+                Log.d("Main", "weworkhk");
+                XposedHelpers.findAndHookMethod("org.gallonyin.weworkhk.MainActivity", lpparam.classLoader, "confirm", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(true);
+                    }
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
