@@ -1,6 +1,7 @@
 package org.gallonyin.weworkhk.util;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 /**
  * Created by Gallon2 on 2018/6/30.
@@ -156,6 +157,51 @@ public class BitmapUtils {
             sb.append(Integer.toHexString(iTmp));
         }
         return sb.toString();
+    }
+
+    public static void diff(String s1, String s2) {
+        char[] s1s = s1.toCharArray();
+        char[] s2s = s2.toCharArray();
+        int diffNum = 0;
+        for (int i = 0; i<s1s.length; i++) {
+            if (s1s[i] != s2s[i]) {
+                diffNum++;
+            }
+        }
+        System.out.println("diffNum="+diffNum);
+    }
+
+    public static boolean isTheTime(String s1, String s2) {
+        if (s1.length() != s2.length()) return false;
+        char[] s1s = s1.toCharArray();
+        char[] s2s = s2.toCharArray();
+        int diffNum = 0;
+        for (int i = 0; i<s1s.length; i++) {
+            if (s1s[i] != s2s[i]) {
+                diffNum++;
+            }
+        }
+        System.out.println("s1=" + s1);
+        System.out.println("s2=" + s2);
+        System.out.println("diffNum="+diffNum);
+        return diffNum < 30;
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options op, int reqWidth,
+                                            int reqheight) {
+        int originalWidth = op.outWidth;
+        int originalHeight = op.outHeight;
+        int inSampleSize = 1;
+        if (originalWidth > reqWidth || originalHeight > reqheight) {
+            int halfWidth = originalWidth / 2;
+            int halfHeight = originalHeight / 2;
+            while ((halfWidth / inSampleSize > reqWidth)
+                    && (halfHeight / inSampleSize > reqheight)) {
+                inSampleSize *= 2;
+            }
+        }
+        inSampleSize /= 2;
+        return inSampleSize;
     }
 
 }

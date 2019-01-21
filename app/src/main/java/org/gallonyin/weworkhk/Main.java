@@ -20,7 +20,7 @@ public class Main implements IXposedHookLoadPackage {
         try {
             XposedBridge.log("handleLoadPackage: " + lpparam.packageName + "    " + lpparam.processName);
 
-            if (lpparam.packageName.equals("com.tencent.wework")) {
+            if (lpparam.packageName.equals("com.tencent.wework") && lpparam.processName.equals("com.tencent.wework")) {
                 Log.d("Main", "wework");
                 new WeWork().start(lpparam.classLoader);
             }

@@ -34,12 +34,6 @@ import java.util.List;
 
 /**
  * Created by gallonyin on 2018/6/13.
- * <p>
- * todo List 添加数据库
- * 开启校偏 0.002    -0.005
- * 界面左拉框
- * 腾讯获取坐标点 http://lbs.qq.com/tool/getpoint/
- * 开关
  */
 
 public class MainActivity extends AppCompatActivity {
@@ -47,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int SCREENSHOT = 10;
 
-    private EditText et_la;
-    private EditText et_lo;
     private CheckBox cb_open;
     private SharedPreferences sp;
 
@@ -93,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        et_la = findViewById(R.id.et_la);
-        et_lo = findViewById(R.id.et_lo);
         cb_open = findViewById(R.id.cb_open);
         cb_open.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -102,8 +92,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent("weworkdk_open");
                 intent.putExtra("open", isChecked);
                 sendBroadcast(intent);
+                sp.edit().putBoolean("open", isChecked).apply();
             }
         });
+        cb_open.setChecked(sp.getBoolean("open", true));
         findViewById(R.id.bt_gps).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,12 +121,38 @@ public class MainActivity extends AppCompatActivity {
 
                 //test todo
 
-                Intent i = new Intent("weworkdk_activity");
-                i.putExtra("start", true);
-                sendBroadcast(i);
-                success = false;
-                handler.removeMessages(SCREENSHOT);
-                handler.sendEmptyMessageDelayed(SCREENSHOT, 8000);
+//                Intent i = new Intent("weworkdk_activity");
+//                i.putExtra("start", true);
+//                sendBroadcast(i);
+//                success = false;
+//                handler.removeMessages(SCREENSHOT);
+//                handler.sendEmptyMessageDelayed(SCREENSHOT, 8000);
+
+//                MyApplication.INSTANCE.getSignUtils().sign(2);
+            }
+        });
+        findViewById(R.id.bt_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("weworkdk_activity");
+                intent.putExtra("status", Global.RECORD_GO_TO_WORK);
+                sendBroadcast(intent);
+            }
+        });
+        findViewById(R.id.bt_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("weworkdk_activity");
+                intent.putExtra("status", Global.RECORD_GET_OFF_WORK);
+                sendBroadcast(intent);
+            }
+        });
+        findViewById(R.id.bt_3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("weworkdk_activity");
+                intent.putExtra("status", Global.GO_TO_WORK);
+                sendBroadcast(intent);
             }
         });
 
@@ -154,10 +172,13 @@ public class MainActivity extends AppCompatActivity {
             new Thread() {
                 @Override
                 public void run() {
+//                    Log.e(TAG, "onStartCommand(): ");
+//                    MyApplication.INSTANCE.getSignUtils().sign(2);
                 }
             }.start();
             AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            long triggerAtTime = System.currentTimeMillis() + 60 * 60 * 1000;
+//            long triggerAtTime = System.currentTimeMillis() + 60 * 60 * 1000;
+            long triggerAtTime = System.currentTimeMillis() + 30 * 1000;
             Intent i = new Intent(this, LongRunningService.class);
             manager.set(AlarmManager.RTC_WAKEUP, triggerAtTime, PendingIntent.getService(this, 0, i, 0));
             return super.onStartCommand(intent, flags, startId);
@@ -166,11 +187,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void startDK() {
         Log.e(TAG, "startDK()");
-//        startActivity(new Intent(this, MainActivity.class));
-//        Intent i = new Intent(this, MainActivity.class);
-//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(i);
-        Log.e(TAG, "startDK()222233");
 //        new Thread() {
 //            @Override
 //            public void run() {

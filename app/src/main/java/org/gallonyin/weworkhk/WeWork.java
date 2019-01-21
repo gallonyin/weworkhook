@@ -1,6 +1,7 @@
 package org.gallonyin.weworkhk;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 
 import org.gallonyin.weworkhk.util.ShellUtils;
+import org.gallonyin.weworkhk.util.SignUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -62,6 +64,7 @@ public class WeWork {
     }
 
     private void initReceiver(Context context, final SharedPreferences sp) {
+        final SignUtils signUtils = new SignUtils((Application) context, sp);
         BroadcastReceiver receiver = new BroadcastReceiver() {
 
             @Override
@@ -72,7 +75,6 @@ public class WeWork {
                 switch (action) {
                     case "weworkdk_gps":
                         String data = intent.getStringExtra("data");
-                        Log.e(TAG, "onReceive: " + data);
                         String[] split = data.split("#");
                         if (split.length != 2) return;
                         la = Float.parseFloat(split[0]);
@@ -83,32 +85,12 @@ public class WeWork {
                         break;
                     case "weworkdk_open":
                         isOpen = intent.getBooleanExtra("open", true);
+                        sp.edit().putBoolean("open", isOpen).apply();
                         break;
                     case "weworkdk_activity":
-                        boolean start = intent.getBooleanExtra("start", true);
-                        if (start) {
-                            final Class<?> ParamClass = WeWorkClazz.getParamClass();
-                            final Class<?> AttendanceActivity2Class = WeWorkClazz.getAttendanceActivity2Class();
-                            Parcelable o = null;
-                            try {
-                                o = (Parcelable) ParamClass.newInstance();
-                                ParamClass.getField("dMq").set(o, true);
-                                ParamClass.getField("dMr").set(o, true);
-                                ParamClass.getField("from").set(o, 2);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            Intent i = new Intent(context, AttendanceActivity2Class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            i.putExtra("data", o);
-                            context.startActivity(i);
-                        } else {
-                            ShellUtils.execCmd("input keyevent 4", true);
-                            ShellUtils.execCmd("input keyevent 3", true);
-                        }
-                        break;
-                    case "weworkdk_screenshot":
-                        ShellUtils.execCmd("screencap -p /sdcard/autoshot.png", true);
+                        int status = intent.getIntExtra("status", -1);
+                        final Class<?> ParamClass = WeWorkClazz.getParamClass();
+                        signUtils.sign(status);
                         break;
                 }
             }
@@ -126,16 +108,18 @@ public class WeWork {
         XposedHelpers.findAndHookMethod("android.app.Application", classLoader, "attach", Context.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                context = (Context) param.args[0];
+                context = (Application) param.thisObject;
 
-                SharedPreferences sp = context.getSharedPreferences("hkWeWork", Context.MODE_PRIVATE);
+                final SharedPreferences sp = context.getSharedPreferences("hkWeWork", Context.MODE_PRIVATE);
                 la = sp.getFloat("GPSLatitude", defLa);
                 lo = sp.getFloat("GPSLongitude", defLo);
+                isOpen = sp.getBoolean("open", true);
 
                 hkGPS(classLoader);
+
                 initReceiver(context, sp);
 
-                hkActivity(context);
+//                hkActivity(context);
             }
         });
     }
