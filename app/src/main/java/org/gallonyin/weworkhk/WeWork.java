@@ -89,7 +89,6 @@ public class WeWork {
                         break;
                     case "weworkdk_activity":
                         int status = intent.getIntExtra("status", -1);
-                        final Class<?> ParamClass = WeWorkClazz.getParamClass();
                         signUtils.sign(status);
                         break;
                     case Intent.ACTION_TIME_TICK:
