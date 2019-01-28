@@ -92,6 +92,9 @@ public class WeWork {
                         final Class<?> ParamClass = WeWorkClazz.getParamClass();
                         signUtils.sign(status);
                         break;
+                    case Intent.ACTION_TIME_TICK:
+                        Log.e("APPTEST2", "onReceive2");
+                        break;
                 }
             }
         };
@@ -100,6 +103,7 @@ public class WeWork {
         filter.addAction("weworkdk_open");
         filter.addAction("weworkdk_activity");
         filter.addAction("weworkdk_screenshot");
+        filter.addAction(Intent.ACTION_TIME_TICK);
         context.registerReceiver(receiver, filter);
     }
 

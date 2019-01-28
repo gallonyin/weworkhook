@@ -1,7 +1,12 @@
 package org.gallonyin.weworkhk;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.gallonyin.weworkhk.util.SignUtils;
 
@@ -13,8 +18,6 @@ public class MyApplication extends Application {
 
     public static MyApplication INSTANCE;
     public static SharedPreferences sp;
-
-    private SignUtils signUtils;
 
     @Override
     public void onCreate() {

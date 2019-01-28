@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.gallonyin.weworkhk.Global;
+import org.gallonyin.weworkhk.Main;
 import org.gallonyin.weworkhk.MainActivity;
 import org.gallonyin.weworkhk.MyApplication;
 import org.gallonyin.weworkhk.WeWorkClazz;
@@ -217,11 +218,13 @@ public class SignUtils {
                 } else {
                     String id = sp.getString(status - 2 + "", "");
                     if (BitmapUtils.isTheTime(id, new_id)) {
-//                        ShellUtils.execCmd("screencap -p /sdcard/autoshot3.png", true);
+                        int tapX = (int) (midX + Math.random() * 20 - 10);
+                        int tapY = (int) (midY + Math.random() * 20 - 10);
+                        ShellUtils.execCmd("input tap " + tapX + " " + tapY, true);
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(context, "打卡", Toast.LENGTH_SHORT).show();
+                                CustomToast.showLongToast("打卡");
                             }
                         });
                         try {
@@ -231,16 +234,17 @@ public class SignUtils {
                         }
                         goBack();
                     } else {
-                        //...
+                        //...loop
                         Toast.makeText(context, "打卡失败", Toast.LENGTH_SHORT).show();
                         goBack();
                     }
                 }
             }
 
-            private void goBack() {
+            private void
+            goBack() {
                 signing = false;
-                ShellUtils.execCmd("am start -n org.gallonyin.weworkhk", true);
+                ShellUtils.execCmd("am start -n org.gallonyin.weworkhk/.MainActivity", true);
             }
         }.start();
     }

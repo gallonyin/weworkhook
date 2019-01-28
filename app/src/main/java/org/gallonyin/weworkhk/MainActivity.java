@@ -155,6 +155,14 @@ public class MainActivity extends AppCompatActivity {
                 sendBroadcast(intent);
             }
         });
+        findViewById(R.id.bt_4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("weworkdk_activity");
+                intent.putExtra("status", Global.GET_OFF_WORK);
+                sendBroadcast(intent);
+            }
+        });
 
         startService(new Intent(this, LongRunningService.class));
     }
