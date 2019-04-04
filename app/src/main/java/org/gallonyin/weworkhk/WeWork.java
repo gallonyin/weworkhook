@@ -449,7 +449,7 @@ public class WeWork {
                 });
             }
 
-            if (method.getName().equals("requestSingleUpdate ")
+            if (method.getName().equals("requestSingleUpdate")
                     && !Modifier.isAbstract(method.getModifiers())
                     && Modifier.isPublic(method.getModifiers())) {
                 XposedBridge.hookMethod(method, new XC_MethodHook() {
