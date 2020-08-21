@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:gesture-image="http://schemas.polites.com/android"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/black" >
+
+    <ProgressBar
+        android:id="@+id/pb_loading_vpp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+         />
+
+    <ImageView
+        android:id="@+id/iv_content_vpp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
+
+    
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp">
+     <TextView 
+        android:id="@+id/save_bt"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:background="@drawable/btn_save"
+        android:text="保存"/>
+     
+
+      
+      </RelativeLayout>
+
+
+</FrameLayout>
