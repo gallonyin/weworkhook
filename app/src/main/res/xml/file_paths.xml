@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <paths>
+        <!--对应外部内存卡根目录：Environment.getExternalStorageDirectory()-->
+        <external-path name="external-path" path="" />
+    </paths>
+</resources>

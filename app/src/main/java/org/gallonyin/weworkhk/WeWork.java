@@ -38,6 +38,8 @@ public class WeWork {
     private float defLo = 118.784308f;
     private float la = 0;
     private float lo = 0;
+    private String defPicPath = "/storage/emulated/0/Tencent/WeixinWork/data/attendance/1597939200000.jpg";
+    private String picPath = "";
     private boolean isOpen = true;
 
     public void start(ClassLoader classLoader) {
@@ -54,9 +56,10 @@ public class WeWork {
                 Log.e(TAG, "onReceive: " + intent.getAction());
                 String action = intent.getAction();
                 if (action == null) return;
+                String data;
                 switch (action) {
                     case "weworkdk_gps":
-                        String data = intent.getStringExtra("data");
+                        data = intent.getStringExtra("data");
                         Log.e(TAG, "onReceive: " + data);
                         String[] split = data.split("#");
                         if (split.length != 2) return;
@@ -66,6 +69,12 @@ public class WeWork {
                                 .putFloat("GPSLongitude", lo)
                                 .apply();
                         break;
+                    case "weworkdk_pic":
+                        data = intent.getStringExtra("data");
+                        Log.e(TAG, "onReceive: " + data);
+                        picPath = data;
+                        sp.edit().putString("PicPath", picPath).apply();
+                        break;
                     case "weworkdk_open":
                         isOpen = intent.getBooleanExtra("open", true);
                         break;
@@ -74,6 +83,7 @@ public class WeWork {
         };
 
         IntentFilter filter = new IntentFilter("weworkdk_gps");
+        filter.addAction("weworkdk_pic");
         filter.addAction("weworkdk_open");
         context.registerReceiver(receiver, filter);
     }
@@ -88,8 +98,10 @@ public class WeWork {
                 SharedPreferences sp = context.getSharedPreferences("hkWeWork", Context.MODE_PRIVATE);
                 la = sp.getFloat("GPSLatitude", defLa);
                 lo = sp.getFloat("GPSLongitude", defLo);
+                picPath = sp.getString("PicPath", defPicPath);
 
                 hkGPS(classLoader);
+                hkPic(classLoader, sp);
                 initReceiver(context, sp);
             }
         });
@@ -490,6 +502,28 @@ public class WeWork {
                 });
             }
         }
+    }
+
+    private void hkPic(ClassLoader classLoader, final SharedPreferences sp) {
+        Log.d(TAG, "hkPic: ");
+
+        XposedHelpers.findAndHookMethod("android.os.BaseBundle", classLoader,
+                "getString", String.class, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (!isOpen) return;
+
+                        if (param.args.length > 0 && (param.args[0] instanceof String)) {
+                            String pa = (String) param.args[0];
+                            if (pa.equals("extra_photo_url")) {
+                                Log.d(TAG, "get extra_photo_url: ");
+                                param.setResult(picPath);
+                                Log.d(TAG, "hook extra_photo_url: " + picPath);
+                                sp.edit().putString("PicPath", defPicPath).apply(); //用一次就清除
+                            }
+                        }
+                    }
+                });
     }
 
 }

@@ -50,8 +50,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".TencentMapActivity" />
+<!--        <activity android:name=".PhotoSelectorActivity" />-->
+        <activity android:name="com.zzti.fengyongge.imagepicker.PhotoSelectorActivity"></activity>
+        <activity android:name="com.zzti.fengyongge.imagepicker.PhotoPreviewActivity"></activity>
 
         <service android:name=".MainActivity$LongRunningService" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="org.gallonyin.weworkhk.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

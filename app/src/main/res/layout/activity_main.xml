@@ -16,7 +16,8 @@
         android:layout_width="216dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_below="@id/bt_gps"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:hint="纬度 latitude"
         android:inputType="numberDecimal" />
@@ -26,26 +27,70 @@
         android:layout_width="216dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp"
+        android:layout_below="@id/et_la"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:hint="经度 longitude"
         android:inputType="numberDecimal" />
 
     <Button
-        android:id="@+id/bt_save"
+        android:id="@+id/bt_save_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="300dp"
-        android:text="SAVE" />
+        android:layout_below="@id/et_lo"
+        android:layout_marginTop="10dp"
+        android:text="保存坐标" />
+
+    <ImageView
+        android:id="@+id/iv_pick_pic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="fitXY"
+        android:layout_below="@id/et_lo"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:text="拾取图片" />
+
+    <Button
+        android:id="@+id/bt_pick_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/bt_save_location"
+        android:layout_marginTop="50dp"
+        android:text="拾取图片" />
+
+    <EditText
+        android:id="@+id/et_pic_path"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/bt_pick_pic"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="图片绝对路径"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/bt_save_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/et_pic_path"
+        android:layout_marginTop="10dp"
+        android:text="保存图片地址" />
 
     <CheckBox
         android:id="@+id/cb_open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="350dp"
+        android:layout_marginTop="10dp"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginRight="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_below="@id/bt_save_pic"
         android:checked="true"
         android:text="启用修改" />
 
