@@ -74,6 +74,8 @@ public class WeWork {
                         Log.e(TAG, "onReceive: " + data);
                         picPath = data;
                         sp.edit().putString("PicPath", picPath).apply();
+                        Intent broadcast = new Intent("weworkdk_pic_success");
+                        context.sendBroadcast(broadcast);
                         break;
                     case "weworkdk_open":
                         isOpen = intent.getBooleanExtra("open", true);

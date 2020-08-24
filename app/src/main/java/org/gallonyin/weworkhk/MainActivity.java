@@ -3,8 +3,10 @@ package org.gallonyin.weworkhk;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView iv_pick_pic;
     private CheckBox cb_open;
     private SharedPreferences sp;
+    private boolean inject_pic_success;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +111,22 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bt_save_pic).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                inject_pic_success = false;
                 String pic_path = et_pic_path.getText().toString();
                 Intent intent = new Intent("weworkdk_pic");
                 intent.putExtra("data", pic_path);
                 sendBroadcast(intent);
-                Toast.makeText(MainActivity.this, "保存修改成功", Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this, "保存修改成功", Toast.LENGTH_SHORT).show();
+                iv_pick_pic.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!inject_pic_success) {
+                            Toast.makeText(MainActivity.this, "疑似注入失败", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "图片注入成功", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, 500);
                 sp.edit().putString("PicPath", pic_path).apply();
             }
         });
@@ -123,7 +137,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
         }
 
-        startService(new Intent(this, LongRunningService.class));
+        IntentFilter filter = new IntentFilter("weworkdk_pic_success");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.e("TAG", "onReceive: " + intent.getAction());
+                inject_pic_success = true;
+            }
+        }, filter);
     }
 
     @Override
