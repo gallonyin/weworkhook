@@ -18,8 +18,9 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public class Main implements IXposedHookLoadPackage {
 
     @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
         try {
+            Log.d("Main", "handleLoadPackage");
             XposedBridge.log("handleLoadPackage: " + lpparam.packageName + "    " + lpparam.processName);
 
             if (lpparam.packageName.equals("com.tencent.wework")) {
@@ -36,6 +37,7 @@ public class Main implements IXposedHookLoadPackage {
                 });
             }
         } catch (Exception e) {
+            Log.w("Main", "handleLoadPackage catch Exception");
             e.printStackTrace();
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));

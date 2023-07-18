@@ -57,7 +57,7 @@
         <service android:name=".MainActivity$LongRunningService" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="org.gallonyin.weworkhk.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
